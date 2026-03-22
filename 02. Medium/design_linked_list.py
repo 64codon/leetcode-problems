@@ -26,16 +26,10 @@ class MyLinkedList:
             current = current.getNext()
             step += 1
         
-        # Check if the number of steps is equivalent to the given index
-        if step == index:
-            # If current is None, fetch the datafield of the last node
-            if current is None:
-                temp = self.end
-                return temp.getData()
-            # Otherwise, return the datafield of the current node
-            else:
-                return current.data
-        
+        if current is not None:
+            return current.data
+        else:
+            return -1
         
 
     def addAtHead(self, val: int) -> None:
@@ -55,6 +49,7 @@ class MyLinkedList:
 
         if current is not None:
             current.setNext(temp)
+            self.end = temp
         else:
             # i.e. The list is empty
             self.end = temp
@@ -66,24 +61,21 @@ class MyLinkedList:
         step = 0
 
         while current is not None and step != index:
+            prev = current
             current = current.getNext()
             step += 1
         
-        # Is the current pointer referencing the first node in the list?
-        if prev is None:
-            self.addAtHead(val)
-        # Is the previous pointer referencing the last node in the list?
-        elif current is None:
-            prev.setNext(temp)
-        # Is the index equal to the size of the lsit?
-        # If so, add the node at the end of the list
-        elif index == step + 1:
-            self.addAtTail(val)
-        # Are the prev and current pointers referencing two valid nodes in the list?
-        else:
-            temp = Node(val)
-            temp.setNext(current)
-            prev.setNext(temp)
+        if step == index:
+            # Is the current pointer referencing the first node in the list?
+            if prev is None:
+                self.addAtHead(val)
+            # Is the previous pointer referencing the last node in the list?
+            elif current is None:
+                self.addAtTail(val)
+            else:
+                temp = Node(val)
+                temp.setNext(current)
+                prev.setNext(temp)
 
     def deleteAtIndex(self, index: int) -> None:
         prev = None
@@ -91,15 +83,27 @@ class MyLinkedList:
         step = 0
 
         while current is not None and step != index:
+            prev = current
             current = current.getNext()
             step += 1
 
-        if current is None:
-            return
-        elif prev is None:
-            self.head = current.getNext()
-        else:
-            prev.setNext(current.getNext())
+        if step == index:
+            # Is there only one item in the list?
+            if current is prev:
+                self.head = None
+                self.end = self.head
+            # Is the passed index value out-of-bound?
+            elif current is None:
+                return
+            # Is the current pointer referencing the head of the list?
+            elif prev is None:
+                self.head = current.getNext()
+            # Is the rpev pointer referencing the end of the list?
+            elif current.next is None:
+                prev.setNext(None)
+                self.end = prev
+            else:
+                prev.setNext(current.getNext())
             
         
 
